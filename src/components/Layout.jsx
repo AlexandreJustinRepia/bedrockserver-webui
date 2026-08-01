@@ -89,6 +89,12 @@ function NavContent({ children }) {
       <main className="max-w-5xl mx-auto px-6 py-10">
         {children}
       </main>
+      <footer className="max-w-5xl mx-auto px-6 py-8">
+        <div className="divider mb-6" />
+        <p className="text-center text-xs" style={{ color: 'var(--color-text-secondary)' }}>
+          Developed by <strong style={{ color: 'var(--color-text)' }}>Alexandre Justin Repia</strong>
+        </p>
+      </footer>
     </div>
   )
 }
