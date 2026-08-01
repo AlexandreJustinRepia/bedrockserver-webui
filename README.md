@@ -1,6 +1,6 @@
 # Bedrock Server Web UI
 
-![Minecraft Bedrock Logo](public/assets/images/logo/minecraft-bedrock.svg)
+![Minecraft Bedrock Logo](public/assets/images/logo/logo.png)
 
 A web interface for Minecraft Bedrock Dedicated Server.
 

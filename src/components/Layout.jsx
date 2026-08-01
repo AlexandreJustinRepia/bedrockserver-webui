@@ -59,7 +59,7 @@ function NavContent({ children }) {
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center">
               <img
-                src="/assets/images/logo/minecraft-bedrock.svg"
+                src="/assets/images/logo/logo.png"
                 alt="Minecraft Bedrock Server"
                 className="h-8 w-8 mr-2"
                 style={{ color: 'var(--color-text)' }}
