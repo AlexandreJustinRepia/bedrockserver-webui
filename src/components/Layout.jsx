@@ -58,6 +58,12 @@ function NavContent({ children }) {
         <div className="max-w-5xl mx-auto px-6">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center">
+              <img
+                src="/assets/images/logo/minecraft-bedrock.svg"
+                alt="Minecraft Bedrock Server"
+                className="h-8 w-8 mr-2"
+                style={{ color: 'var(--color-text)' }}
+              />
               <span className="font-editorial text-lg font-semibold tracking-tight" style={{ color: 'var(--color-text)' }}>
                 Bedrock Server
               </span>
