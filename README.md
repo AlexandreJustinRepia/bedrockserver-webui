@@ -12,7 +12,7 @@
 
 1. Clone this repo into your bedrock server folder:
    ```bash
-   git clone https://github.com/your-username/bedrock-server-web-ui.git web-ui
+   git clone https://github.com/AlexandreJustinRepia/bedrockserver-webui.git web-ui
    ```
 
 2. Install dependencies:
