@@ -2,12 +2,75 @@ import { useState, useEffect, useRef } from 'react'
 
 const API_BASE = 'http://localhost:3001/api'
 
+const COMMANDS = [
+  'op',
+  'deop',
+  'kick',
+  'ban',
+  'pardon',
+  'unban',
+  'whitelist',
+  'list',
+  'say',
+  'tp',
+  'teleport',
+  'give',
+  'effect',
+  'enchant',
+  'gamemode',
+  'difficulty',
+  'time',
+  'weather',
+  'kill',
+  'me',
+  'msg',
+  'tell',
+  'w',
+  'title',
+  'playsound',
+  'stop',
+  'reload',
+  'save',
+  'seed',
+  'setblock',
+  'clone',
+  'fill',
+  'summon',
+  'spawnpoint',
+  'worldborder',
+  'execute',
+  'function',
+  'scoreboard',
+  'team',
+  'tag',
+  'data',
+  'attribute',
+  'recipe',
+  'xp',
+  'loot',
+  'camerashake',
+  'event',
+  'fog',
+  'music',
+  'particle',
+  'schedule',
+  'stopsound',
+  'titleraw',
+  'trigger',
+  'toggledownfall',
+  'help',
+  '?',
+]
+
 export default function Console() {
   const [status, setStatus] = useState('stopped')
   const [logs, setLogs] = useState([])
   const [input, setInput] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const [selectedIndex, setSelectedIndex] = useState(-1)
   const wsRef = useRef(null)
   const logEndRef = useRef(null)
+  const inputRef = useRef(null)
 
   useEffect(() => {
     const ws = new WebSocket('ws://localhost:3001/ws/console')
@@ -75,14 +138,60 @@ export default function Console() {
   const sendCommand = async (e) => {
     e.preventDefault()
     if (!input.trim()) return
-    setLogs((prev) => [...prev, { type: 'cmd', text: `> ${input}` }])
-    const trimmed = input
+    const trimmed = input.trim().replace(/^\//, '')
+    setLogs((prev) => [...prev, { type: 'cmd', text: `> ${trimmed}` }])
     setInput('')
+    setSuggestions([])
+    setSelectedIndex(-1)
     await fetch(`${API_BASE}/server/command`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ command: trimmed }),
     })
+  }
+
+  const handleInputChange = (e) => {
+    const value = e.target.value
+    setInput(value)
+    if (value.trim().length > 0) {
+      const filtered = COMMANDS.filter((cmd) =>
+        cmd.toLowerCase().startsWith(value.trim().toLowerCase())
+      )
+      setSuggestions(filtered)
+      setSelectedIndex(-1)
+    } else {
+      setSuggestions([])
+      setSelectedIndex(-1)
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    if (suggestions.length === 0) return
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1))
+    } else if (e.key === 'Tab' || e.key === 'Enter') {
+      if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+        e.preventDefault()
+        setInput(suggestions[selectedIndex])
+        setSuggestions([])
+        setSelectedIndex(-1)
+        inputRef.current?.focus()
+      }
+    } else if (e.key === 'Escape') {
+      setSuggestions([])
+      setSelectedIndex(-1)
+    }
+  }
+
+  const selectSuggestion = (cmd) => {
+    setInput(cmd)
+    setSuggestions([])
+    setSelectedIndex(-1)
+    inputRef.current?.focus()
   }
 
   const statusConfig = {
@@ -149,19 +258,42 @@ export default function Console() {
           ))}
           <div ref={logEndRef} />
         </div>
-        <form onSubmit={sendCommand} className="mt-4">
+        <form onSubmit={sendCommand} className="mt-4 relative">
           <div className="flex gap-3">
             <input
+              ref={inputRef}
               type="text"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               placeholder="Enter command..."
               className="input-field font-mono"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck="false"
             />
             <button type="submit" className="btn-primary">
               Send
             </button>
           </div>
+          {suggestions.length > 0 && (
+            <div className="suggestions-dropdown">
+              {suggestions.map((cmd, i) => (
+                <button
+                  key={cmd}
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    selectSuggestion(cmd)
+                  }}
+                  className={`suggestion-item ${i === selectedIndex ? 'selected' : ''}`}
+                >
+                  {cmd}
+                </button>
+              ))}
+            </div>
+          )}
         </form>
       </div>
     </div>

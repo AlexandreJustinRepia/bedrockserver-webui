@@ -272,6 +272,46 @@
     color: var(--color-text);
   }
 
+  .suggestions-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme='dark'] .suggestions-dropdown {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .suggestion-item {
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-family: 'Geist Mono', 'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
+    color: var(--color-text);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: background-color 120ms ease;
+  }
+
+  .suggestion-item:last-child {
+    border-bottom: none;
+  }
+
+  .suggestion-item:hover,
+  .suggestion-item.selected {
+    background: var(--color-hover-overlay-strong);
+  }
+
   .stagger-item {
     opacity: 0;
     transform: translateY(12px);
