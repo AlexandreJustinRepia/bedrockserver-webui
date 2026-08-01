@@ -23,9 +23,14 @@ app.use(express.json({ limit: '50mb' }))
 let serverProcess = null
 let serverStatus = 'stopped'
 const consoleClients = new Set()
+const recentLogs = []
+const MAX_LOGS = 500
 
 function broadcastConsole(data) {
   const message = typeof data === 'string' ? data : JSON.stringify(data)
+  const logEntry = typeof data === 'string' ? { type: 'raw', text: data } : data
+  recentLogs.push(logEntry)
+  if (recentLogs.length > MAX_LOGS) recentLogs.shift()
   consoleClients.forEach((ws) => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(message)
@@ -114,6 +119,10 @@ app.get('/api/server/status', (req, res) => {
   res.json(getServerStatus())
 })
 
+app.get('/api/server/logs', (req, res) => {
+  res.json({ logs: recentLogs })
+})
+
 app.post('/api/server/start', async (req, res) => {
   const externalPid = findExternalServerPid()
   if (externalPid) {
@@ -144,6 +153,7 @@ app.post('/api/server/start', async (req, res) => {
     broadcastConsole({ type: 'info', text: `Server process exited with code ${code}` })
     serverProcess = null
     serverStatus = 'stopped'
+    recentLogs.length = 0
     broadcastConsole({ type: 'status', status: 'stopped' })
   })
 
@@ -151,6 +161,7 @@ app.post('/api/server/start', async (req, res) => {
     broadcastConsole({ type: 'error', text: `Failed to start server: ${err.message}` })
     serverProcess = null
     serverStatus = 'stopped'
+    recentLogs.length = 0
     broadcastConsole({ type: 'status', status: 'stopped' })
   })
 

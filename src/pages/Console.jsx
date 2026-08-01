@@ -34,6 +34,29 @@ export default function Console() {
   }, [])
 
   useEffect(() => {
+    async function restoreState() {
+      try {
+        const [statusRes, logsRes] = await Promise.all([
+          fetch(`${API_BASE}/server/status`),
+          fetch(`${API_BASE}/server/logs`),
+        ])
+        if (statusRes.ok) {
+          const statusData = await statusRes.json()
+          setStatus(statusData.status)
+          setExternalPid(statusData.externalPid || null)
+        }
+        if (logsRes.ok) {
+          const logsData = await logsRes.json()
+          setLogs(logsData.logs || [])
+        }
+      } catch {
+        // ignore
+      }
+    }
+    restoreState()
+  }, [])
+
+  useEffect(() => {
     if (logEndRef.current) {
       logEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
