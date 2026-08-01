@@ -48,7 +48,6 @@ npm run build
 - Console with live output and command input
 - Player allowlist management
 - Server property configuration
-- Addon management
 - Dark / light mode toggle
 
 ## Notes
@@ -56,7 +55,6 @@ npm run build
 - The backend assumes `bedrock_server.exe` is in the parent directory.
 - Server properties are read from and written to `../server.properties`.
 - Players are managed via `../allowlist.json`.
-- Addons are read from `../behavior_packs` and `../resource_packs`.
 - Theme preference is saved to `localStorage`.
 
 ---

@@ -13,8 +13,6 @@ const ROOT_DIR = path.resolve(__dirname, '../..')
 const SERVER_EXE = path.join(ROOT_DIR, 'bedrock_server.exe')
 const SERVER_PROPERTIES = path.join(ROOT_DIR, 'server.properties')
 const ALLOWLIST_PATH = path.join(ROOT_DIR, 'allowlist.json')
-const BEHAVIOR_PACKS_DIR = path.join(ROOT_DIR, 'behavior_packs')
-const RESOURCE_PACKS_DIR = path.join(ROOT_DIR, 'resource_packs')
 
 const app = express()
 app.use(cors())
@@ -71,14 +69,6 @@ function readAllowlist() {
 
 function writeAllowlist(data) {
   fs.writeFileSync(ALLOWLIST_PATH, JSON.stringify(data, null, 2), 'utf-8')
-}
-
-function listPacks(dir) {
-  if (!fs.existsSync(dir)) return []
-  return fs.readdirSync(dir).filter((f) => {
-    const full = path.join(dir, f)
-    return fs.statSync(full).isDirectory()
-  })
 }
 
 function findExternalServerPid() {
@@ -253,41 +243,6 @@ app.delete('/api/players/:name', (req, res) => {
   const list = readAllowlist().filter((p) => p.name !== name)
   writeAllowlist(list)
   res.json(list)
-})
-
-app.get('/api/addons', (req, res) => {
-  const behavior = listPacks(BEHAVIOR_PACKS_DIR)
-  const resource = listPacks(RESOURCE_PACKS_DIR)
-  const result = [
-    ...behavior.map((name) => ({ name, type: 'Behavior Pack', path: path.join(BEHAVIOR_PACKS_DIR, name) })),
-    ...resource.map((name) => ({ name, type: 'Resource Pack', path: path.join(RESOURCE_PACKS_DIR, name) })),
-  ]
-  res.json(result)
-})
-
-app.post('/api/addons', (req, res) => {
-  const { name, type } = req.body
-  if (!name || !type) {
-    return res.status(400).json({ error: 'name and type are required' })
-  }
-  const dir = type === 'Behavior Pack' ? BEHAVIOR_PACKS_DIR : RESOURCE_PACKS_DIR
-  fs.mkdirSync(dir, { recursive: true })
-  const target = path.join(dir, name)
-  fs.mkdirSync(target, { recursive: true })
-  res.json({ created: true, path: target })
-})
-
-app.delete('/api/addons', (req, res) => {
-  const { name, type } = req.body
-  if (!name || !type) {
-    return res.status(400).json({ error: 'name and type are required' })
-  }
-  const dir = type === 'Behavior Pack' ? BEHAVIOR_PACKS_DIR : RESOURCE_PACKS_DIR
-  const target = path.join(dir, name)
-  if (fs.existsSync(target)) {
-    fs.rmSync(target, { recursive: true, force: true })
-  }
-  res.json({ deleted: true })
 })
 
 app.get('/api/health', (req, res) => {
