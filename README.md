@@ -1,8 +1,12 @@
-# Bedrock Server Web UI
+<p align="center">
+  <img src="public/assets/images/logo/logo.png" alt="Minecraft Bedrock Logo" width="120" height="120">
+</p>
 
-![Minecraft Bedrock Logo](public/assets/images/logo/logo.png)
+<h1 align="center">Bedrock Server Web UI</h1>
 
-A web interface for Minecraft Bedrock Dedicated Server.
+<p align="center">A web interface for Minecraft Bedrock Dedicated Server.</p>
+
+<br />
 
 ## Setup
 
@@ -54,3 +58,9 @@ npm run build
 - Players are managed via `../allowlist.json`.
 - Addons are read from `../behavior_packs` and `../resource_packs`.
 - Theme preference is saved to `localStorage`.
+
+---
+
+<p align="center">
+  Developed by <strong>Alexandre Justin Repia</strong>
+</p>
