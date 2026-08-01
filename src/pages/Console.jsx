@@ -4,7 +4,6 @@ const API_BASE = 'http://localhost:3001/api'
 
 export default function Console() {
   const [status, setStatus] = useState('stopped')
-  const [externalPid, setExternalPid] = useState(null)
   const [logs, setLogs] = useState([])
   const [input, setInput] = useState('')
   const wsRef = useRef(null)
@@ -18,7 +17,6 @@ export default function Console() {
       const data = JSON.parse(event.data)
       if (data.type === 'status') {
         setStatus(data.status)
-        setExternalPid(data.externalPid || null)
       } else if (data.type === 'info' || data.type === 'stdout' || data.type === 'stderr' || data.type === 'error') {
         setLogs((prev) => [...prev, data])
       }
@@ -43,7 +41,6 @@ export default function Console() {
         if (statusRes.ok) {
           const statusData = await statusRes.json()
           setStatus(statusData.status)
-          setExternalPid(statusData.externalPid || null)
         }
         if (logsRes.ok) {
           const logsData = await logsRes.json()
@@ -75,15 +72,6 @@ export default function Console() {
     if (data.status) setStatus('stopped')
   }
 
-  const killExternal = async () => {
-    const res = await fetch(`${API_BASE}/server/force-kill-external`, { method: 'POST' })
-    const data = await res.json()
-    if (data.killed) {
-      setExternalPid(null)
-      setStatus('stopped')
-    }
-  }
-
   const sendCommand = async (e) => {
     e.preventDefault()
     if (!input.trim()) return
@@ -100,7 +88,7 @@ export default function Console() {
   const statusConfig = {
     running: { label: 'Running', className: 'tag-green' },
     starting: { label: 'Starting', className: 'tag-yellow' },
-    external: { label: 'External Process', className: 'tag-red' },
+    external: { label: 'Running', className: 'tag-green' },
     stopped: { label: 'Stopped', className: 'tag-blue' },
   }
 
@@ -120,13 +108,8 @@ export default function Console() {
         <div className="flex items-center gap-3">
           <span className={`tag ${currentStatus.className}`}>
             {currentStatus.label}
-            {status === 'external' && externalPid && ` · PID ${externalPid}`}
           </span>
-          {status === 'external' && externalPid ? (
-            <button onClick={killExternal} className="btn-danger">
-              Kill External
-            </button>
-          ) : status === 'running' || status === 'starting' ? (
+          {status === 'running' || status === 'starting' || status === 'external' ? (
             <button onClick={stopServer} className="btn-danger">
               Stop
             </button>

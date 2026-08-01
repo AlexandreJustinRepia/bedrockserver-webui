@@ -54,7 +54,7 @@ function NavContent({ children }) {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--color-canvas)' }}>
-      <nav className="border-b" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}>
+      <nav className="sticky top-0 z-50 border-b" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}>
         <div className="max-w-5xl mx-auto px-6">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center">

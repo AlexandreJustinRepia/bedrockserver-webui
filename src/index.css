@@ -228,8 +228,32 @@
     line-height: 1.6;
     color: var(--color-text);
     overflow-y: auto;
-    max-height: 480px;
+    height: 480px;
     transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .console-output::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .console-output::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  .console-output::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+
+  .console-output::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
+  }
+
+  .console-output::-webkit-scrollbar-corner {
+    background: transparent;
   }
 
   .log-cmd {
