@@ -32,66 +32,72 @@ export default function Configs() {
   }
 
   const inputClass =
-    'w-full bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+    'input-field font-mono text-sm'
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Server Config</h1>
-        <button
-          onClick={saveConfig}
-          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors"
-        >
-          {saved ? 'Saved!' : 'Save Changes'}
+        <div>
+          <h1 className="font-editorial text-3xl font-semibold tracking-tight" style={{ color: 'var(--color-text)' }}>
+            Server Config
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Adjust server properties and gameplay settings.
+          </p>
+        </div>
+        <button onClick={saveConfig} className="btn-primary">
+          {saved ? 'Saved' : 'Save Changes'}
         </button>
       </div>
 
-      <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden divide-y divide-gray-700">
-        {Object.entries(config).map(([key, value]) => (
-          <div key={key} className="flex items-center justify-between px-4 py-3">
-            <label className="text-sm text-gray-300 w-48 flex-shrink-0">
-              {key}
-            </label>
-            {key === 'gamemode' ? (
-              <select
-                value={value}
-                onChange={(e) => update(key, e.target.value)}
-                className={inputClass}
-              >
-                <option value="survival">survival</option>
-                <option value="creative">creative</option>
-                <option value="adventure">adventure</option>
-              </select>
-            ) : key === 'difficulty' ? (
-              <select
-                value={value}
-                onChange={(e) => update(key, e.target.value)}
-                className={inputClass}
-              >
-                <option value="peaceful">peaceful</option>
-                <option value="easy">easy</option>
-                <option value="normal">normal</option>
-                <option value="hard">hard</option>
-              </select>
-            ) : ['online-mode', 'white-list', 'enable-command-block'].includes(key) ? (
-              <select
-                value={value}
-                onChange={(e) => update(key, e.target.value)}
-                className={inputClass}
-              >
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            ) : (
-              <input
-                type={['max-players', 'spawn-protection', 'view-distance', 'tick-distance', 'player-idle-timeout'].includes(key) ? 'number' : 'text'}
-                value={value}
-                onChange={(e) => update(key, e.target.value)}
-                className={inputClass}
-              />
-            )}
-          </div>
-        ))}
+      <div className="card">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Object.entries(config).map(([key, value]) => (
+            <div key={key} className="flex flex-col gap-2">
+              <label className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
+                {key}
+              </label>
+              {key === 'gamemode' ? (
+                <select
+                  value={value}
+                  onChange={(e) => update(key, e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="survival">survival</option>
+                  <option value="creative">creative</option>
+                  <option value="adventure">adventure</option>
+                </select>
+              ) : key === 'difficulty' ? (
+                <select
+                  value={value}
+                  onChange={(e) => update(key, e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="peaceful">peaceful</option>
+                  <option value="easy">easy</option>
+                  <option value="normal">normal</option>
+                  <option value="hard">hard</option>
+                </select>
+              ) : ['online-mode', 'white-list', 'enable-command-block'].includes(key) ? (
+                <select
+                  value={value}
+                  onChange={(e) => update(key, e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="true">true</option>
+                  <option value="false">false</option>
+                </select>
+              ) : (
+                <input
+                  type={['max-players', 'spawn-protection', 'view-distance', 'tick-distance', 'player-idle-timeout'].includes(key) ? 'number' : 'text'}
+                  value={value}
+                  onChange={(e) => update(key, e.target.value)}
+                  className={inputClass}
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )

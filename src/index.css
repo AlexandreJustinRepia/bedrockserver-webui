@@ -1,3 +1,263 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root,
+  [data-theme='light'] {
+    --color-canvas: #FBFBFA;
+    --color-surface: #FFFFFF;
+    --color-border: #EAEAEA;
+    --color-text: #111111;
+    --color-text-secondary: #787774;
+    --color-accent-red-bg: #FDEBEC;
+    --color-accent-red-text: #9F2F2D;
+    --color-accent-blue-bg: #E1F3FE;
+    --color-accent-blue-text: #1F6C9F;
+    --color-accent-green-bg: #EDF3EC;
+    --color-accent-green-text: #346538;
+    --color-accent-yellow-bg: #FBF3DB;
+    --color-accent-yellow-text: #956400;
+    --color-console-bg: #F7F6F3;
+    --color-hover-overlay: rgba(0, 0, 0, 0.03);
+    --color-hover-overlay-strong: rgba(0, 0, 0, 0.05);
+    --color-focus-ring: rgba(17, 17, 17, 0.06);
+  }
+
+  [data-theme='dark'] {
+    --color-canvas: #121212;
+    --color-surface: #1E1E1E;
+    --color-border: #2E2E2E;
+    --color-text: #E7E5E4;
+    --color-text-secondary: #A8A29E;
+    --color-accent-red-bg: #3B1E1F;
+    --color-accent-red-text: #FCA5A5;
+    --color-accent-blue-bg: #1A2E3B;
+    --color-accent-blue-text: #93C5FD;
+    --color-accent-green-bg: #1E3B1F;
+    --color-accent-green-text: #86EFAC;
+    --color-accent-yellow-bg: #3B3418;
+    --color-accent-yellow-text: #FCD34D;
+    --color-console-bg: #0A0A0A;
+    --color-hover-overlay: rgba(255, 255, 255, 0.04);
+    --color-hover-overlay-strong: rgba(255, 255, 255, 0.06);
+    --color-focus-ring: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    font-family: 'SF Pro Display', 'Geist Sans', 'Helvetica Neue', 'Switzer', system-ui, sans-serif;
+    background-color: var(--color-canvas);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+}
+
+@layer components {
+  .font-editorial {
+    font-family: 'Lyon Text', 'Newsreader', 'Playfair Display', 'Instrument Serif', Georgia, serif;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .font-mono {
+    font-family: 'Geist Mono', 'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
+  }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 24px;
+    transition: box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), background-color 200ms ease, border-color 200ms ease;
+  }
+
+  .card-hover:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme='dark'] .card-hover:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-primary {
+    background: #111111;
+    color: #FFFFFF;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 150ms ease, transform 100ms ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  [data-theme='dark'] .btn-primary {
+    background: #E7E5E4;
+    color: #111111;
+  }
+
+  [data-theme='dark'] .btn-primary:hover {
+    background: #D6D3D1;
+  }
+
+  .btn-primary:hover {
+    background: #333333;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn-danger {
+    background: var(--color-accent-red-bg);
+    color: var(--color-accent-red-text);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 150ms ease, transform 100ms ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-danger:hover {
+    background: #fbdada;
+  }
+
+  [data-theme='dark'] .btn-danger:hover {
+    background: #4A2526;
+  }
+
+  .btn-danger:active {
+    transform: scale(0.98);
+  }
+
+  .input-field {
+    width: 100%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--color-text);
+    transition: border-color 150ms ease, box-shadow 150ms ease, background-color 200ms ease, border-color 200ms ease;
+    outline: none;
+  }
+
+  .input-field:focus {
+    border-color: #111111;
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+
+  [data-theme='dark'] .input-field:focus {
+    border-color: #E7E5E4;
+  }
+
+  .input-field::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .tag-green {
+    background: var(--color-accent-green-bg);
+    color: var(--color-accent-green-text);
+  }
+
+  .tag-red {
+    background: var(--color-accent-red-bg);
+    color: var(--color-accent-red-text);
+  }
+
+  .tag-yellow {
+    background: var(--color-accent-yellow-bg);
+    color: var(--color-accent-yellow-text);
+  }
+
+  .tag-blue {
+    background: var(--color-accent-blue-bg);
+    color: var(--color-accent-blue-text);
+  }
+
+  .divider {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    transition: color 150ms ease, background-color 150ms ease;
+    text-decoration: none;
+  }
+
+  .nav-link:hover {
+    color: var(--color-text);
+    background: var(--color-hover-overlay);
+  }
+
+  .nav-link.active {
+    color: var(--color-text);
+    background: var(--color-hover-overlay-strong);
+  }
+
+  .console-output {
+    background: var(--color-console-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Geist Mono', 'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text);
+    overflow-y: auto;
+    max-height: 480px;
+    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+  }
+
+  .log-cmd {
+    color: var(--color-accent-blue-text);
+  }
+
+  .log-error {
+    color: var(--color-accent-red-text);
+  }
+
+  .log-info {
+    color: var(--color-text-secondary);
+  }
+
+  .log-std {
+    color: var(--color-text);
+  }
+
+  .stagger-item {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeInUp 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

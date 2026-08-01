@@ -74,70 +74,85 @@ export default function Console() {
     })
   }
 
-  const statusColor = status === 'running' ? 'bg-green-900 text-green-200' : status === 'starting' ? 'bg-yellow-900 text-yellow-200' : status === 'external' ? 'bg-orange-900 text-orange-200' : 'bg-red-900 text-red-200'
-  const statusLabel = status === 'running' ? 'Running' : status === 'starting' ? 'Starting...' : status === 'external' ? 'External Process' : 'Stopped'
+  const statusConfig = {
+    running: { label: 'Running', className: 'tag-green' },
+    starting: { label: 'Starting', className: 'tag-yellow' },
+    external: { label: 'External Process', className: 'tag-red' },
+    stopped: { label: 'Stopped', className: 'tag-blue' },
+  }
+
+  const currentStatus = statusConfig[status] || statusConfig.stopped
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Console</h1>
+        <div>
+          <h1 className="font-editorial text-3xl font-semibold tracking-tight" style={{ color: 'var(--color-text)' }}>
+            Console
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            Start, stop, and interact with the server process.
+          </p>
+        </div>
         <div className="flex items-center gap-3">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}`}>
-            {statusLabel}
+          <span className={`tag ${currentStatus.className}`}>
+            {currentStatus.label}
+            {status === 'external' && externalPid && ` · PID ${externalPid}`}
           </span>
           {status === 'external' && externalPid ? (
-            <button
-              onClick={killExternal}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
-            >
-              Kill External (PID {externalPid})
+            <button onClick={killExternal} className="btn-danger">
+              Kill External
             </button>
           ) : status === 'running' || status === 'starting' ? (
-            <button
-              onClick={stopServer}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
-            >
+            <button onClick={stopServer} className="btn-danger">
               Stop
             </button>
           ) : (
-            <button
-              onClick={startServer}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors"
-            >
+            <button onClick={startServer} className="btn-primary">
               Start
             </button>
           )}
         </div>
       </div>
 
-      <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-700">
-          <h2 className="text-sm font-medium text-gray-300">Server Output</h2>
+      <div className="card card-hover">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+            Server Output
+          </h2>
         </div>
-        <div className="h-96 overflow-y-auto p-4 font-mono text-sm text-gray-300 bg-black">
+        <div className="console-output">
           {logs.length === 0 && (
-            <p className="text-gray-500">Server output will appear here...</p>
+            <p style={{ color: 'var(--color-text-secondary)' }}>Server output will appear here...</p>
           )}
           {logs.map((log, i) => (
-            <div key={i} className={log.type === 'cmd' ? 'text-yellow-400' : log.type === 'error' ? 'text-red-400' : 'text-gray-300'}>
+            <div
+              key={i}
+              className={[
+                'log-line',
+                log.type === 'cmd' ? 'log-cmd' : '',
+                log.type === 'error' ? 'log-error' : '',
+                log.type === 'info' ? 'log-info' : '',
+                log.type === 'stdout' || log.type === 'stderr' ? 'log-std' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
               {log.text}
             </div>
           ))}
           <div ref={logEndRef} />
         </div>
-        <form onSubmit={sendCommand} className="p-4 border-t border-gray-700 bg-gray-800">
-          <div className="flex gap-2">
+        <form onSubmit={sendCommand} className="mt-4">
+          <div className="flex gap-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Enter command..."
-              className="flex-1 bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+              className="input-field font-mono"
             />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
-            >
+            <button type="submit" className="btn-primary">
               Send
             </button>
           </div>

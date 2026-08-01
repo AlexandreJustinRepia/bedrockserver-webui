@@ -38,58 +38,74 @@ export default function Players() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Players</h1>
+    <div className="space-y-8">
+      <div>
+        <h1 className="font-editorial text-3xl font-semibold tracking-tight" style={{ color: 'var(--color-text)' }}>
+          Players
+        </h1>
+        <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+          Manage the server allowlist by adding or removing players.
+        </p>
+      </div>
 
-      <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-700">
-          <h2 className="text-sm font-medium text-gray-300">Add Player</h2>
-        </div>
-        <form onSubmit={addPlayer} className="p-4 flex gap-3">
+      <div className="card">
+        <h2 className="text-sm font-medium mb-4" style={{ color: 'var(--color-text-secondary)' }}>
+          Add Player
+        </h2>
+        <form onSubmit={addPlayer} className="flex gap-3">
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Player name"
-            className="flex-1 bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="input-field"
           />
           <input
             type="text"
             value={xuid}
             onChange={(e) => setXuid(e.target.value)}
             placeholder="XUID"
-            className="w-40 bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
+            className="input-field font-mono"
           />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
-          >
+          <button type="submit" className="btn-primary">
             Add
           </button>
         </form>
       </div>
 
-      <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-700">
-          <h2 className="text-sm font-medium text-gray-300">Player List ({players.length})</h2>
+      <div className="card">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+            Player List ({players.length})
+          </h2>
         </div>
-        <div className="divide-y divide-gray-700">
+        <div className="divide-y" style={{ borderColor: 'var(--color-border)' }}>
           {players.map((player, i) => (
-            <div key={i} className="flex items-center justify-between px-4 py-3">
+            <div
+              key={i}
+              className="flex items-center justify-between py-3 stagger-item"
+              style={{ animationDelay: `${i * 60}ms` }}
+            >
               <div>
-                <p className="text-sm font-medium text-white">{player.name}</p>
-                <p className="text-xs text-gray-500 font-mono">{player.xuid}</p>
+                <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+                  {player.name}
+                </p>
+                <p className="text-xs font-mono mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+                  {player.xuid}
+                </p>
               </div>
               <button
                 onClick={() => removePlayer(player.name)}
-                className="px-3 py-1 bg-red-900 hover:bg-red-800 text-red-200 rounded text-xs font-medium transition-colors"
+                className="btn-danger"
               >
                 Remove
               </button>
             </div>
           ))}
           {players.length === 0 && (
-            <p className="px-4 py-6 text-sm text-gray-500 text-center">No players added.</p>
+            <p className="py-6 text-sm text-center" style={{ color: 'var(--color-text-secondary)' }}>
+              No players added.
+            </p>
           )}
         </div>
       </div>
