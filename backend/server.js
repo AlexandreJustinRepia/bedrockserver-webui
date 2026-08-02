@@ -131,6 +131,7 @@ app.post('/api/server/start', async (req, res) => {
 
   serverProcess.stdout.on('data', (data) => {
     const text = data.toString()
+    parseOnlinePlayers(text)
     broadcastConsole({ type: 'stdout', text })
   })
 
@@ -143,6 +144,8 @@ app.post('/api/server/start', async (req, res) => {
     broadcastConsole({ type: 'info', text: `Server process exited with code ${code}` })
     serverProcess = null
     serverStatus = 'stopped'
+    onlinePlayers = new Set()
+    resetListState()
     recentLogs.length = 0
     broadcastConsole({ type: 'status', status: 'stopped' })
   })
@@ -201,6 +204,76 @@ app.post('/api/server/force-kill-external', async (req, res) => {
   }
 })
 
+let onlinePlayers = new Set()
+let listCommandResolve = null
+let listBuffer = ''
+let listInProgress = false
+
+function stripLogTimestamp(line) {
+  return line.replace(/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}:\d{3} INFO\]\s*/, '').trim()
+}
+
+function parseOnlinePlayers(text) {
+  const hasListHeader = /there are \d+ of a max of \d+ players online/i.test(text)
+
+  if (hasListHeader) {
+    listInProgress = true
+    listBuffer = text
+  } else if (listInProgress) {
+    listBuffer += text
+  }
+
+  if (!listInProgress) return
+
+  const lines = listBuffer.split(/\r?\n/)
+  const players = []
+  let started = false
+
+  for (const rawLine of lines) {
+    const line = stripLogTimestamp(rawLine)
+    if (!line) continue
+
+    if (!started) {
+      if (/there are \d+ of a max of \d+ players online/i.test(line)) {
+        started = true
+        const colonIndex = line.indexOf(':')
+        if (colonIndex !== -1 && colonIndex < line.length - 1) {
+          const after = line.substring(colonIndex + 1).trim()
+          if (after) {
+            players.push(...after.split(',').map((n) => n.trim()).filter(Boolean))
+          }
+        }
+      }
+      continue
+    }
+
+    if (/^\[\d{4}-\d{2}-\d{2}/.test(rawLine) && !/players online/i.test(line)) {
+      break
+    }
+
+    players.push(line)
+  }
+
+  if (started) {
+    const hasZeroPlayers = /there are 0 of a max of \d+ players online/i.test(listBuffer)
+    if (players.length > 0 || hasZeroPlayers) {
+      onlinePlayers = new Set(players)
+      listInProgress = false
+      listBuffer = ''
+      if (listCommandResolve) {
+        listCommandResolve(Array.from(onlinePlayers))
+        listCommandResolve = null
+      }
+    }
+  }
+}
+
+function resetListState() {
+  listInProgress = false
+  listBuffer = ''
+  listCommandResolve = null
+}
+
 app.post('/api/server/command', (req, res) => {
   const { command } = req.body
   if (!serverProcess) {
@@ -208,6 +281,37 @@ app.post('/api/server/command', (req, res) => {
   }
   serverProcess.stdin.write(command + '\n')
   res.json({ sent: true })
+})
+
+app.get('/api/players/online', (req, res) => {
+  const externalPid = findExternalServerPid()
+  if (!serverProcess && !externalPid) {
+    resetListState()
+    return res.json({ online: [] })
+  }
+
+  const timeout = setTimeout(() => {
+    resetListState()
+    res.json({ online: Array.from(onlinePlayers) })
+  }, 5000)
+
+  listCommandResolve = (players) => {
+    clearTimeout(timeout)
+    res.json({ online: players })
+  }
+
+  if (serverProcess) {
+    try {
+      serverProcess.stdin.write('/list\n')
+      return
+    } catch {
+      // fall through to return cached data
+    }
+  }
+
+  clearTimeout(timeout)
+  resetListState()
+  res.json({ online: Array.from(onlinePlayers) })
 })
 
 app.get('/api/config', (req, res) => {
